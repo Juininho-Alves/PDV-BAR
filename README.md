@@ -40,9 +40,4 @@ Principais tabelas:
 - `produtos`
 - `vendas`
 
-## Execução
 
-Clone o projeto:
-
-```bash
-git clone URL_DO_REPOSITORIOs
