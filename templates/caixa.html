@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}BarPro - Caixa{% endblock %}
+
+{% block active_caixa %}active{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <!-- COLUNA ESQUERDA -->
+    <div class="col-lg-5">
+
+        <div class="custom-card">
+
+            <!-- ================================= -->
+            <!-- FORM 1 - RESUMO + PAGAMENTO -->
+            <!-- ================================= -->
+
+            <div class="card-header-custom p-0 mb-3">
+                <h3>
+                    <i class="fa-solid fa-calculator"></i>
+                    Caixa
+                </h3>
+            </div>
+
+            <form method="POST">
+
+                <!-- CLIENTE -->
+                <div class="mb-3">
+
+                    <label for="selectCliente" class="form-label">
+                        Cliente
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="selectCliente"
+                        name="cliente_id"
+                        required
+                        style="background-color: #1b1b28; color: #fff; border: 1px solid var(--border-color, #2b2b40);">
+
+                        <option value="" disabled selected>
+                            Escolha um cliente...
+                        </option>
+
+                        {% for i in clientes %}
+                            <option value="{{ i[0] }}">
+                                {{ i[1] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <!-- BOTÃO RESUMO -->
+                <button
+                    type="submit"
+                    name="acao"
+                    value="resumo"
+                    class="btn-accent w-100 py-2 mb-4">
+
+                    <i class="fa-solid fa-list-check"></i>
+                    Consultar resumo
+
+                </button>
+
+
+                <hr
+                    style="border-color: var(--border-color, #2b2b40);"
+                    class="my-4">
+
+
+                <!-- PAGAMENTO -->
+                <div class="card-header-custom p-0 mb-3">
+
+                    <h3>
+                        <i class="fa-solid fa-money-bill"></i>
+                        Pagamento
+                    </h3>
+
+                </div>
+
+
+                <!-- TOTAL -->
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Total a Pagar
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            R$
+                        </span>
+
+                        <input
+                            type="text"
+                            class="form-control fw-bold fs-5 text-warning"
+                            id="precoTotal"
+                            name="preco_total"
+                            value="{{ '%.2f' | format(total[0]) if total else '0.00' }}"
+                            readonly>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VALOR PAGO -->
+                <div class="mb-3">
+
+                    <label for="valorPago" class="form-label">
+                        Valor Pago pelo Cliente
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            R$
+                        </span>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control fw-bold fs-5 text-success"
+                            id="valorPago"
+                            name="valor_pago"
+                            placeholder="0.00"
+                            oninput="calcularTroco()">
+
+                    </div>
+
+                </div>
+
+
+                <!-- TROCO -->
+                <div class="mb-4">
+
+                    <label for="valorTroco" class="form-label">
+                        Troco
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            R$
+                        </span>
+
+                        <input
+                            type="text"
+                            class="form-control fw-bold fs-5 text-info"
+                            id="valorTroco"
+                            name="troco"
+                            value="0.00"
+                            readonly>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FINALIZAR -->
+                <button
+                    type="submit"
+                    name="acao"
+                    value="finalizar"
+                    class="btn-accent w-100 py-3">
+
+                    <i class="fa-solid fa-circle-check"></i>
+                    Finalizar Venda
+
+                </button>
+
+            </form>
+
+
+            <hr
+                style="border-color: var(--border-color, #2b2b40);"
+                class="my-4">
+
+
+            <!-- ================================= -->
+            <!-- FORM 2 - ADICIONAR PRODUTO -->
+            <!-- ================================= -->
+
+            <div class="card-header-custom p-0 mb-3">
+
+                <h3>
+                    <i class="fa-solid fa-cart-plus"></i>
+                    Adicionar Produto
+                </h3>
+
+            </div>
+
+            <form method="POST">
+
+                <!-- CLIENTE -->
+                <div class="mb-3">
+
+                    <label for="selectClienteProduto" class="form-label">
+                        Cliente
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="selectClienteProduto"
+                        name="cliente_id"
+                        required
+                        style="background-color: #1b1b28; color: #fff; border: 1px solid var(--border-color, #2b2b40);">
+
+                        <option value="" disabled selected>
+                            Escolha um cliente...
+                        </option>
+
+                        {% for i in clientes %}
+                            <option value="{{ i[0] }}">
+                                {{ i[1] }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- PRODUTO -->
+                <div class="mb-3">
+
+                    <label for="selectProduto" class="form-label">
+                        Produto
+                    </label>
+
+                    <select
+                        class="form-control"
+                        id="selectProduto"
+                        name="produto_id"
+                        required
+                        style="background-color: #1b1b28; color: #fff; border: 1px solid var(--border-color, #2b2b40);">
+
+                        <option value="" disabled selected>
+                            Escolha um produto...
+                        </option>
+
+                        {% for produto in produtos %}
+
+                            <option value="{{ produto[0] }}">
+                                {{ produto[1] }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- QUANTIDADE -->
+                <div class="mb-3">
+
+                    <label for="quantidade" class="form-label">
+                        Quantidade
+                    </label>
+
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="quantidade"
+                        name="quantidade"
+                        min="1"
+                        value="1"
+                        required
+                        style="background-color: #1b1b28; color: #fff;">
+
+                </div>
+
+
+                <!-- ADICIONAR -->
+                <button
+                    type="submit"
+                    name="acao"
+                    value="adicionar"
+                    class="btn-accent w-100 py-2">
+
+                    <i class="fa-solid fa-plus"></i>
+                    Adicionar Produto
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================= -->
+<!-- COLUNA DIREITA - RESUMO -->
+<!-- ================================= -->
+
+<div class="col-lg-7">
+
+    <div class="custom-card">
+
+        <div class="card-header-custom">
+
+            <div>
+
+                <h3>
+                    <i class="fa-solid fa-receipt"></i>
+                    Resumo da Compra
+                </h3>
+                {% if cliente_nome %}
+                    <p class="mt-4" style="color: #fff;">
+                        Cliente:
+                        <strong style="color: #ffc107;">{{ cliente_nome[0] }}</strong>
+                    </p>
+                {% endif %}
+
+            </div>
+
+            <span
+                class="badge"
+                style="background-color: rgba(255, 193, 7, 0.15); color: #ffc107; border: 1px solid #ffc107;">
+
+                PENDENTE
+
+            </span>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table-custom">
+
+                <thead>
+
+                    <tr>
+                        <th>Produto</th>
+                        <th>Preço</th>
+                        <th>Quantidade</th>
+                        <th>Total</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% if dados %}
+
+                        {% for i in dados %}
+
+                            <tr>
+
+                                <td>{{ i[0] }}</td>
+
+                                <td>
+                                    R$ {{ "%.2f"|format(i[1]) }}
+                                </td>
+
+                                <td>
+                                    {{ i[2] }}
+                                </td>
+
+                                <td>
+                                    R$ {{ "%.2f"|format(i[3]) }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center py-4"
+                                style="color: white;">
+
+                                Selecione um cliente para
+                                consultar o resumo.
+
+                            </td>
+
+                        </tr>
+
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- CÁLCULO DO TROCO -->
+<!-- ================================= -->
+
+<script>
+
+function calcularTroco() {
+
+    const total =
+        parseFloat(
+            document.getElementById('precoTotal').value
+        ) || 0;
+
+    const pago =
+        parseFloat(
+            document.getElementById('valorPago').value
+        ) || 0;
+
+    const troco = pago - total;
+
+    document.getElementById('valorTroco').value =
+        troco.toFixed(2);
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}BarPro - Gestão de Clientes{% endblock %}
+
+{% block active_clientes %}active{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header-section">
+    <div class="page-title">
+        <h2>Gerenciamento de Clientes</h2>
+        
+    </div>
+    <div class="search-bar">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" placeholder="Buscar cliente por nome ou telefone...">
+    </div>
+</header>
+
+<div class="row">
+    <!-- Form: Register Client -->
+    <div class="col-lg-4">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <h3><i class="fa-solid fa-user-plus"></i> Novo Cliente</h3>
+            </div>
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="nomeCliente" class="form-label">Nome do Cliente</label>
+                    <input type="text" class="form-control" id="nomeCliente" name="nome" placeholder="Ex: Lucas Silva" required>
+                </div>
+
+                <button type="submit" class="btn-accent">
+                    <i class="fa-solid fa-check"></i> Cadastrar Cliente
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table: Registered Clients -->
+    <div class="col-lg-8">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <h3><i class="fa-solid fa-address-book"></i> Clientes Cadastrados</h3>
+                <span class="badge badge-regular" style="background-color: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--border-color);">{{contagem_clientes[0]}} Clientes</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th style="text-align: right;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in clientes_cadastrados %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <strong>{{i[0]}}</strong>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <strong>{{i[1]}}</strong>
+                                </div>
+                            </td>
+                            
+                            
+                            
+                            <td style="text-align: right;">
+                                <a href="{{url_for('editar_cliente',id=i[0])}}" class="action-btn" title="Editar"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a class="action-btn delete" title="Excluir"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

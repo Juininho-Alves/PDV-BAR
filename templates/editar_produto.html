@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}BarPro - Editar Produto{% endblock %}
+
+{% block active_clientes %}active{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header-section">
+    <div class="page-title">
+        <h2>Editar Produto</h2>
+    </div>
+</header>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="custom-card">
+            <div class="card-header-custom">
+                <h3><i class="fa-solid fa-user-pen"></i> Alterar Dados do Produto</h3>
+                <span class="badge badge-regular" style="background-color: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid var(--border-color);">
+                    #{{dados[0]}}
+                </span>
+            </div>
+
+            <!-- Ajuste a action para a sua rota de atualização se necessário -->
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="nomeProduto" class="form-label">Nome do Produto</label>
+                    <input type="text" class="form-control" id="nomeProduto" name="nome" value="{{dados[1]}}" placeholder="Ex: Cerveja " required autofocus>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="precoProduto" class="form-label">Preço do Produto</label>
+                    <input type="number" step="0.01" class="form-control" id="precoProduto" name="preco" value="{{dados[2]}}" placeholder="Ex: R$ 4.00 " required autofocus>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    
+                    <a href="{{ url_for('produtos') }}" class="btn btn-secondary" style="background-color: transparent; border: 1px solid var(--border-color); color: #fff;">
+                        <i class="fa-solid fa-xmark"></i> Cancelar
+                    </a>
+                    
+                    <!-- Botão de Salvar -->
+                    <button type="submit" class="btn-accent">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
