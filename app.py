@@ -4,12 +4,7 @@ from conexao import conection
 app = Flask(__name__)
 
 
-@app.route('/')
-def index():
-    return render_template('base.html')
-
-
-@app.route('/clientes', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def clientes():
     conn = conection()
     cursor = conn.cursor()
@@ -157,12 +152,18 @@ def caixa():
 
                 total = cursor.execute(
                     '''
-                SELECT SUM(total) FROM vendas WHERE cliente_id = ? AND status = "pendente"
+                    SELECT COALESCE(SUM(total), 0)
+                    FROM vendas
+                    WHERE cliente_id = ? AND status = "pendente"
                     ''',
-                    (cliente_id,)).fetchone()
+                    (cliente_id,)
+                ).fetchone()
 
                 cliente_nome = cursor.execute('SELECT nome FROM clientes WHERE id = ?',
                                               (cliente_id,)).fetchone()
+
+            else:
+                print(cliente_id)
 
         elif acao == 'adicionar':
             cliente_id = request.form.get('cliente_id')
@@ -179,6 +180,34 @@ def caixa():
                     conn.commit()
                     conn.close()
                     return redirect(url_for('caixa'))
+
+        elif acao == 'finalizar':
+
+            cliente_id = request.form.get('cliente_id')
+
+            if cliente_id:
+
+                venda = cursor.execute(
+                    '''
+                    SELECT id
+                    FROM vendas
+                    WHERE cliente_id = ? AND status = "pendente"
+                    ''',
+                    (cliente_id,)
+                ).fetchone()
+
+                if venda:
+                    cursor.execute(
+                        '''
+                        UPDATE vendas
+                        SET status = "pago"
+                        WHERE cliente_id = ? AND status = "pendente"
+                        ''',
+                        (cliente_id,)
+                    )
+
+                    conn.commit()
+            return redirect(url_for('clientes'))
 
     clientes = cursor.execute('SELECT * FROM clientes').fetchall()
     produtos = cursor.execute('SELECT * FROM produtos').fetchall()
